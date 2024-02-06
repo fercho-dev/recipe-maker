@@ -11,7 +11,12 @@ export async function GET(request) {
     mode === 'subscribe' &&
     reqToken === token
   ) {
-    return NextResponse.json(challenge);
+    //return NextResponse.json(challenge);
+    return new NextResponse(challenge, {
+      headers: {
+        'Content-Type': 'text/plain',
+      },
+    });
   } else {
     return NextResponse.json({ message: `Invalid Token` }, { status: 400 })
   }
