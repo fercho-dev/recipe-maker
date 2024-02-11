@@ -42,13 +42,13 @@ export async function POST(req) {
           'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
           'Content-Type': 'application/json'
         },
-        body: {
+        body: JSON.stringify({
           messaging_product: 'whatsapp',
           to: from,
           text: {
             body: "Hello, I am a bot!"
           }
-        }
+        })
       });
   
       if (!response.ok) {
