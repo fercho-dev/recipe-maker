@@ -25,5 +25,8 @@ export async function GET(request) {
 export async function POST(req) {
   const data = await req.json();
   console.log(data);
+  if(data.entry.changes.field === 'messages') {
+    return NextResponse.json({ message: `Invalid Token` }, { status: 201 })
+  }
   return new Response("Hello, Next.js!");
 }
