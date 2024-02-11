@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-const { verifyWebhook } = require('whatsapp-cloud-api');
+import { Client, verifyWebhook } from 'whatsapp-cloud-api';
 
 export async function GET(request) {
   const token = process.env.VERIFICATION_TOKEN;
