@@ -22,57 +22,46 @@ export async function GET(request) {
   }
 }
 
-async function sendMessage(to, text) {
-  const url = `https://graph.facebook.com/v13.0/${process.env.PHONE_NUMBER_ID}/messages`;
-  const data = {
-    messaging_product: "whatsapp",
-    to: to,
-    type: "text",
-    text: { body: text },
-  };
-
-  const response = await fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer your_access_token`
-    },
-    body: JSON.stringify(data),
-  });
-
-  if (!response.ok) {
-    throw new Error(`HTTP error! status: ${response.status}`);
-  }
-
-  return response.json(); // Devuelve la respuesta de la API de WhatsApp
-}
-
 export async function POST(req) {
-  const data = await req.json();
-  const { entry } = data;
-    if (entry && entry[0].changes && entry[0].changes[0].value.messages) {
-      const messageData = entry[0].changes[0].value.messages[0];
-      const from = messageData.from; // Número de teléfono del remitente
-      //const messageId = messageData.id; // ID del mensaje recibido
-      let textReceived = "";
+  const body = await req.json();
 
-      // Asumiendo que es un mensaje de texto. Adaptar según sea necesario para otros tipos de mensajes.
-      if (messageData.type === "text") {
-        textReceived = messageData.text.body;
+  if(
+    body.entry &&
+    body.entry[0].changes &&
+    body.entry[0].changes[0].value.messages &&
+    body.entry[0].changes[0].value.messages[0]
+  ) {
+    let phon_no_id = body.entry[0].changes[0].value.metadata.phone_number_id;
+    let from = body.entry[0].changes[0].value.messages[0].from;
+    //let msg_body = body.entry[0].changes[0].value.messages[0].text.body;
+
+    try {
+      const response = await fetch(`https://graph.facebook.com/v18.0/${phon_no_id}/messages`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
+          'Content-Type': 'application/json'
+        },
+        body: {
+          messaging_product: 'whatsapp',
+          to: from,
+          text: {
+            body: "Hello, I am a bot!"
+          }
+        }
+      });
+  
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
       }
-
-
-      // Envía una respuesta automática
-      const responseText = "Gracias por tu mensaje. Esto es una respuesta automática.";
-
-      try {
-        const sendMessageResponse = await sendMessage(from, responseText);
-        return NextResponse.json({ success: true }, { status: 200 })
-      } catch (error) {
-        return NextResponse.json({ error: "Error al enviar mensaje" }, { status: 500 })
-      }
-    } else {
-      // No es un mensaje válido o no es lo que esperábamos
-      return NextResponse.json({ error: "Petición no válida" }, { status: 400 })
+  
+      return NextResponse.json({ success: true }, { status: 200 })
+    } catch (error) {
+      console.error("Error al enviar mensaje:", error);
+      return NextResponse.json({ success: false }, { status: 400 })
     }
+
+  } else {
+    return NextResponse.json({ message: `Invalid Request` }, { status: 404 })
+  }
 }
