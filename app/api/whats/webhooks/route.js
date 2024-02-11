@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+const { verifyWebhook } = require('whatsapp-cloud-api');
 
 export async function GET(request) {
   const token = process.env.VERIFICATION_TOKEN;
@@ -24,9 +25,31 @@ export async function GET(request) {
 
 export async function POST(req) {
   const data = await req.json();
-  console.log(data);
-  if(data.entry.changes.field === 'messages') {
-    return NextResponse.json({ message: `Invalid Token` }, { status: 201 })
+  const client = new Client({ credentials: process.env.WHATSAPP_CLOUD_API_CREDENTIALS });
+  const isValidToken = verifyWebhook(req.headers['x-hub-signature'], req.body);
+
+  if (!isValidToken) {
+    return NextResponse.json({ message: 'Invalid Token' }, { status: 401 });
   }
-  return new Response("Hello, Next.js!");
+
+  if(data.entry.changes.field === 'messages') {
+    const message = {
+      "messaging_product": "whatsapp",
+      "recipient_type": "individual",
+      "to": data.entry[0].changes[0].value.phone_number,
+      "text": {
+        "body": "Hola! Este es un mensaje automático."
+      }
+    };
+
+    const response = await client.sendMessage(message);
+
+    if (response.status === 200) {
+      console.log('Respuesta enviada correctamente');
+    } else {
+      console.log('Error al enviar la respuesta:', response.statusText);
+    }
+  }
+
+  return new Response("OK");
 }
