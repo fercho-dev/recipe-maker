@@ -25,7 +25,10 @@ export async function GET(request) {
 
 export async function POST(req) {
   const data = await req.json();
-  const client = new Client({ credentials: process.env.WHATSAPP_CLOUD_API_CREDENTIALS });
+  const client = new Client({ credentials: {
+    app_id: process.env.WHATSAPP_CLOUD_API_CREDENTIALS_APP,
+    app_secret: process.env.WHATSAPP_CLOUD_API_CREDENTIALS_SECRET
+  } });
   const isValidToken = verifyWebhook(req.headers['x-hub-signature'], req.body);
 
   if (!isValidToken) {
