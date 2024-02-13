@@ -30,7 +30,8 @@ export async function POST(req) {
     body.entry[0].changes &&
     !body.entry[0].changes[0].value.statuses &&
     body.entry[0].changes[0].value.messages &&
-    body.entry[0].changes[0].value.messages[0]
+    body.entry[0].changes[0].value.messages[0] &&
+    body.entry[0].changes[0].value.messages[0].type === 'text'
   ) {
     let phon_no_id = body.entry[0].changes[0].value.metadata.phone_number_id;
     let from = body.entry[0].changes[0].value.messages[0].from;
@@ -56,13 +57,12 @@ export async function POST(req) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
   
-      return NextResponse.json({ success: true }, { status: 200 })
+      return NextResponse.json(null, { status: 200 })
     } catch (error) {
-      console.error("Error al enviar mensaje:", error);
       return NextResponse.json({ success: false }, { status: 400 })
     }
 
   } else {
-    return NextResponse.json({ message: `Invalid Request` }, { status: 404 })
+    return NextResponse.json({ message: `Invalid Request - no text` }, { status: 404 })
   }
 }
