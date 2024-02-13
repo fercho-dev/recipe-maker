@@ -35,9 +35,6 @@ export async function POST(req) {
     let phon_no_id = body.entry[0].changes[0].value.metadata.phone_number_id;
     let from = body.entry[0].changes[0].value.messages[0].from;
 
-    console.log(phon_no_id);
-    console.log(from);
-
     if (body.entry[0].changes[0].value.messages[0].type === 'text') {
       //let msg_body = body.entry[0].changes[0].value.messages[0].text.body;
       try {
@@ -76,7 +73,9 @@ export async function POST(req) {
           throw new Error(`HTTP error! status: ${response_id.status}`);
         }
 
+        console.log(response_id);
         const img_url = response_id.url;
+        console.log(img_url);
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
