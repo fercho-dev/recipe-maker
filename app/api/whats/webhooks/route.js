@@ -76,7 +76,7 @@ export async function POST(req) {
           throw new Error(`HTTP error! status: ${response_id.status}`);
         }
 
-        const data = await response.json();
+        const data = await response_id.json();
         const img_url = data.url;
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
