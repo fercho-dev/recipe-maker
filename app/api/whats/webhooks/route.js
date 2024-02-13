@@ -65,7 +65,6 @@ export async function POST(req) {
     } else if (body.entry[0].changes[0].value.messages[0].type === 'image') {
       try {
         let img_id = body.entry[0].changes[0].value.messages[0].image.id;
-        console.log(img_id);
 
         const response_id = await fetch(`https://graph.facebook.com/v19.0/${img_id}`, {
           headers: {
@@ -77,9 +76,8 @@ export async function POST(req) {
           throw new Error(`HTTP error! status: ${response_id.status}`);
         }
 
-        console.log(response_id);
-        const img_url = response_id.url;
-        console.log(img_url);
+        const data = await response.json();
+        const img_url = data.url;
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
