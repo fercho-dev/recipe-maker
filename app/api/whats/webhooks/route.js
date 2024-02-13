@@ -28,6 +28,7 @@ export async function POST(req) {
   if(
     body.entry &&
     body.entry[0].changes &&
+    !body.entry[0].changes[0].value.statuses &&
     body.entry[0].changes[0].value.messages &&
     body.entry[0].changes[0].value.messages[0]
   ) {
@@ -36,7 +37,7 @@ export async function POST(req) {
     //let msg_body = body.entry[0].changes[0].value.messages[0].text.body;
 
     try {
-      const response = await fetch(`https://graph.facebook.com/v18.0/${phon_no_id}/messages`, {
+      const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
