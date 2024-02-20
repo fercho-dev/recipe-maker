@@ -93,7 +93,25 @@ export async function POST(req) {
         const buffer = Buffer.from(arrBuffer)
         const img_data = buffer.toString('base64')
 
-        console.log(img_data)
+        const response_vision = await fetch('/api/vision', {
+          method: 'POST',
+          body: JSON.stringify({ img: `data:image/jpeg;base64,${img_data}` }),
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
+        if (!response_vision.ok) {
+          throw new Error(`Error in response: ${response.status}`);
+        }
+
+        let textResponse = "";
+        const reader = response_vision.body.getReader();
+        let { done, value } = await reader.read();
+        while (!done) {
+          textResponse += new TextDecoder("utf-8").decode(value);
+          ({ done, value } = await reader.read());
+        }
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
@@ -105,7 +123,7 @@ export async function POST(req) {
             messaging_product: 'whatsapp',
             to: from,
             text: {
-              body: `You sent an image with the data: ${img_data.slice(0, 20)}`
+              body: `${textResponse}`
             }
           })
         });
