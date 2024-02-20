@@ -4,7 +4,7 @@ const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export const runtime = 'edge'
+//export const runtime = 'edge'
 
 export async function POST(req) {
 
@@ -13,6 +13,7 @@ export async function POST(req) {
 	const imageUrl = url ?? img
 
   console.log('length base64 vision', imageUrl.length)
+  console.log('base64 text vision', imageUrl.slice(0,20))
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",

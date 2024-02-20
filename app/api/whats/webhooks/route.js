@@ -115,13 +115,14 @@ export async function POST(req) {
 
         console.log("no error in response vision");
 
-        let textResponse = "";
-        const reader = response_vision.body.getReader();
-        let { done, value } = await reader.read();
-        while (!done) {
-          textResponse += new TextDecoder("utf-8").decode(value);
-          ({ done, value } = await reader.read());
-        }
+        // let textResponse = "";
+        // const reader = response_vision.body.getReader();
+        // let { done, value } = await reader.read();
+        // while (!done) {
+        //   textResponse += new TextDecoder("utf-8").decode(value);
+        //   ({ done, value } = await reader.read());
+        // }
+        let textResponse = await response_vision.json();
 
         console.log("textResponse: ", textResponse);
 
