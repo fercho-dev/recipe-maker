@@ -65,6 +65,7 @@ export async function POST(req) {
     } else if (body.entry[0].changes[0].value.messages[0].type === 'image') {
       try {
         let img_id = body.entry[0].changes[0].value.messages[0].image.id;
+        console.log(img_id);
 
         const response_id = await fetch(`https://graph.facebook.com/v19.0/${img_id}`, {
           headers: {
@@ -96,6 +97,9 @@ export async function POST(req) {
         const img_data = buffer.toString('base64')
 
         console.log(img_data)
+        console.log(`Tamaño del buffer: ${buffer.length} bytes`);
+        console.log(`Longitud de la cadena Base64: ${img_data.length} caracteres`);
+
 
         const response_vision = await fetch('/api/vision', {
           method: 'POST',
