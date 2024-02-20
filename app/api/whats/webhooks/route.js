@@ -105,6 +105,8 @@ export async function POST(req) {
           throw new Error(`Error in response: ${response.status}`);
         }
 
+        console.log("no error in response vision");
+
         let textResponse = "";
         const reader = response_vision.body.getReader();
         let { done, value } = await reader.read();
@@ -112,6 +114,8 @@ export async function POST(req) {
           textResponse += new TextDecoder("utf-8").decode(value);
           ({ done, value } = await reader.read());
         }
+
+        console.log("textResponse: ", textResponse);
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
