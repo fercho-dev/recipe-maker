@@ -79,6 +79,8 @@ export async function POST(req) {
         const data = await response_id.json();
         const img_url = data.url;
 
+        console.log(img_url);
+
         const response_img = await fetch(`${img_url}`, {
           headers: {
             'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
