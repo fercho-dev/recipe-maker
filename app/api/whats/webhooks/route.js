@@ -93,6 +93,8 @@ export async function POST(req) {
         const buffer = Buffer.from(arrBuffer)
         const img_data = buffer.toString('base64')
 
+        console.log(img_data)
+
         const response_vision = await fetch('/api/vision', {
           method: 'POST',
           body: JSON.stringify({ img: `data:image/jpeg;base64,${img_data}` }),
