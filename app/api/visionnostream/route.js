@@ -12,6 +12,8 @@ export async function POST(req) {
 
 	const imageUrl = url ?? img
 
+  console.log('length base64 vision', imageUrl.length)
+
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
     max_tokens: 4096,

@@ -101,7 +101,7 @@ export async function POST(req) {
         console.log(`Longitud de la cadena Base64: ${img_data.length} caracteres`);
 
 
-        const response_vision = await fetch('/api/vision', {
+        const response_vision = await fetch('/api/visionnostream', {
           method: 'POST',
           body: JSON.stringify({ img: `data:image/jpeg;base64,${img_data}` }),
           headers: {
