@@ -119,7 +119,7 @@ export async function POST(req) {
             messaging_product: 'whatsapp',
             to: from,
             text: {
-              body: `${visionText}`
+              body: `${visionText.msg.message.content}`
             }
           })
         });
