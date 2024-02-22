@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import crossFetch from "cross-fetch";
 
 export async function GET(request) {
   const token = process.env.VERIFICATION_TOKEN;
@@ -65,7 +66,6 @@ export async function POST(req) {
     } else if (body.entry[0].changes[0].value.messages[0].type === 'image') {
       try {
         let img_id = body.entry[0].changes[0].value.messages[0].image.id;
-        console.log(img_id);
 
         const response_id = await fetch(`https://graph.facebook.com/v19.0/${img_id}`, {
           headers: {
@@ -80,51 +80,34 @@ export async function POST(req) {
         const data = await response_id.json();
         const img_url = data.url;
 
-        console.log(img_url);
+        // cross-fetch
+        const response_url = await crossFetch(url, {
+        headers: {
+            Authorization: `Bearer ${process.env.WHATS_API_TOKEN}`,
+            "User-Agent": "node"
+        }
+        });
 
-        const response_img = await fetch(`${img_url}`, {
-          headers: {
-            'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
-          },
+        if (!response_url.ok) {
+            throw new Error(`HTTP error! status: ${response_url.status}`);
+        }
+
+        const buffer = await response_url.buffer();
+        const base64Data = buffer.toString('base64');
+
+        const resVision = await crossFetch(`${process.env.DEPLOY_URL}/api/visionnostream`, {
+            method: 'POST',
+            body: JSON.stringify({ img: `data:image/jpeg;base64,${base64Data}` }),
+            headers: {
+            'Content-Type': 'application/json',
+            },
         })
 
-        if (!response_img.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
+        if (!resVision.ok) {
+            throw new Error(`Error in response: ${response.status}`);
         }
 
-        const arrBuffer = await response_img.arrayBuffer()
-        const buffer = Buffer.from(arrBuffer)
-        const img_data = buffer.toString('base64')
-
-        console.log(img_data)
-        console.log(`Tamaño del buffer: ${buffer.length} bytes`);
-        console.log(`Longitud de la cadena Base64: ${img_data.length} caracteres`);
-
-
-        const response_vision = await fetch(`${process.env.DEPLOY_URL}/api/visionnostream`, {
-          method: 'POST',
-          body: JSON.stringify({ img: `data:image/jpeg;base64,${img_data}` }),
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        });
-  
-        if (!response_vision.ok) {
-          throw new Error(`Error in response: ${response.status}`);
-        }
-
-        console.log("no error in response vision");
-
-        // let textResponse = "";
-        // const reader = response_vision.body.getReader();
-        // let { done, value } = await reader.read();
-        // while (!done) {
-        //   textResponse += new TextDecoder("utf-8").decode(value);
-        //   ({ done, value } = await reader.read());
-        // }
-        let textResponse = await response_vision.json();
-
-        console.log("textResponse: ", textResponse);
+        const visionText = await resVision.json();
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
@@ -136,7 +119,7 @@ export async function POST(req) {
             messaging_product: 'whatsapp',
             to: from,
             text: {
-              body: `${textResponse}`
+              body: `${visionText}`
             }
           })
         });
