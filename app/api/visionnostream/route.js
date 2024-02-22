@@ -9,12 +9,15 @@ const openai = new OpenAI({
 
 export async function POST(req) {
 
-  const { url, img } = await req.json()
+  const { url, img, caption } = await req.json()
 
-	const imageUrl = url ?? img
-
-  console.log('length base64 vision', imageUrl.length)
-  console.log('base64 text vision', imageUrl.slice(0,20))
+    const imageUrl = url ?? img
+    let imageCaption = ""
+    if(caption) {
+        imageCaption = caption
+    } else {
+        imageCaption = "¿Como puedo preparar este platillo en casa?"
+    }
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
@@ -23,7 +26,7 @@ export async function POST(req) {
       {
         role: "user",
         content: [
-          { type: "text", text: "What’s in this image?" },
+          { type: "text", text: imageCaption },
           {
             type: "image_url",
             image_url: imageUrl,

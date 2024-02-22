@@ -66,6 +66,7 @@ export async function POST(req) {
     } else if (body.entry[0].changes[0].value.messages[0].type === 'image') {
       try {
         let img_id = body.entry[0].changes[0].value.messages[0].image.id;
+        let img_caption = body.entry[0].changes[0].value.messages[0].image.caption || null;
 
         const response_id = await fetch(`https://graph.facebook.com/v19.0/${img_id}`, {
           headers: {
@@ -97,7 +98,10 @@ export async function POST(req) {
 
         const resVision = await crossFetch(`${process.env.DEPLOY_URL}/api/visionnostream`, {
             method: 'POST',
-            body: JSON.stringify({ img: `data:image/jpeg;base64,${base64Data}` }),
+            body: JSON.stringify({
+                img: `data:image/jpeg;base64,${base64Data}`,
+                caption: img_caption
+            }),
             headers: {
             'Content-Type': 'application/json',
             },
