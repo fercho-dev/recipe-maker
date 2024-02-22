@@ -9,10 +9,10 @@ const openai = new OpenAI({
 
 export async function POST(req) {
 
-  const { url, img, caption } = await req.json()
+  const { url, img } = await req.json()
 
     const imageUrl = url ?? img
-    const imageCaption = caption === "" ? "¿Como puedo preparar este platillo en casa?" : caption
+    // const imageCaption = caption === "" ? "¿Como puedo preparar este platillo en casa?" : caption
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
@@ -21,7 +21,10 @@ export async function POST(req) {
       {
         role: "user",
         content: [
-          { type: "text", text: imageCaption },
+          {
+            type: "text",
+            text:  "¿Como puedo preparar este platillo en casa?"
+          },
           {
             type: "image_url",
             image_url: imageUrl,
