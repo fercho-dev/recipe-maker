@@ -67,6 +67,8 @@ export async function POST(req) {
       try {
         let img_id = body.entry[0].changes[0].value.messages[0].image.id;
         // let img_caption = body.entry[0].changes[0].value.messages[0].image.caption || null;
+        console.log("mimetype", body.entry[0].changes[0].value.messages[0].image.mime_type)
+        console.log("image", body.entry[0].changes[0].value.messages[0].image)
 
         const response_id = await fetch(`https://graph.facebook.com/v19.0/${img_id}`, {
           headers: {
