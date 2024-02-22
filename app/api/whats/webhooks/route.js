@@ -81,7 +81,7 @@ export async function POST(req) {
         const img_url = data.url;
 
         // cross-fetch
-        const response_url = await crossFetch(url, {
+        const response_url = await crossFetch(img_url, {
         headers: {
             Authorization: `Bearer ${process.env.WHATS_API_TOKEN}`,
             "User-Agent": "node"
