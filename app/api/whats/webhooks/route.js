@@ -98,6 +98,8 @@ export async function POST(req) {
         const buffer = await response_url.buffer();
         const base64Data = buffer.toString('base64');
 
+        console.log("base64 img", base64Data.slice(0,20))
+
         // const response_prev = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
         //   method: 'POST',
         //   headers: {
@@ -133,6 +135,8 @@ export async function POST(req) {
         }
 
         const visionText = await resVision.json();
+
+        console.log('Vision text:', visionText.slice(0,20))
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
