@@ -96,11 +96,30 @@ export async function POST(req) {
         const buffer = await response_url.buffer();
         const base64Data = buffer.toString('base64');
 
+        const response_prev = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            to: from,
+            text: {
+              body: "Procesando imagen..."
+            }
+          })
+        });
+    
+        if (!response_prev.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
         const resVision = await crossFetch(`${process.env.DEPLOY_URL}/api/visionnostream`, {
             method: 'POST',
             body: JSON.stringify({
                 img: `data:image/jpeg;base64,${base64Data}`,
-                caption: img_caption ?? ""
+                caption: img_caption === null ? "" : img_caption
             }),
             headers: {
             'Content-Type': 'application/json',
