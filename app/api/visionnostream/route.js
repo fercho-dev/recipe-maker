@@ -27,7 +27,10 @@ export async function POST(req) {
           },
           {
             type: "image_url",
-            image_url: imageUrl,
+            image_url: {
+                url: imageUrl,
+                detail: "low"
+            },
           },
         ],
       },
