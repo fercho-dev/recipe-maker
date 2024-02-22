@@ -100,7 +100,7 @@ export async function POST(req) {
             method: 'POST',
             body: JSON.stringify({
                 img: `data:image/jpeg;base64,${base64Data}`,
-                caption: img_caption
+                caption: img_caption ?? ""
             }),
             headers: {
             'Content-Type': 'application/json',

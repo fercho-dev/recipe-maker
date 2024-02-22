@@ -12,12 +12,7 @@ export async function POST(req) {
   const { url, img, caption } = await req.json()
 
     const imageUrl = url ?? img
-    let imageCaption = ""
-    if(caption) {
-        imageCaption = caption
-    } else {
-        imageCaption = "¿Como puedo preparar este platillo en casa?"
-    }
+    const imageCaption = caption === "" ? "¿Como puedo preparar este platillo en casa?" : caption
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
