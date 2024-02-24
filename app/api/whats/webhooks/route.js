@@ -119,7 +119,7 @@ export async function POST(req) {
         //   throw new Error(`HTTP error! status: ${response.status}`);
         // }
 
-        const resVision = await crossFetch(`${process.env.DEPLOY_URL}/api/visionnostream`, {
+        const resVision = await crossFetch(`${process.env.DEPLOY_URL}/api/imageinfo`, {
             method: 'POST',
             body: JSON.stringify({
                 img: `data:image/jpeg;base64,${base64Data}`,
@@ -131,12 +131,29 @@ export async function POST(req) {
         })
 
         if (!resVision.ok) {
-            throw new Error(`Error in response: ${response.status}`);
+            throw new Error(`Error in response: ${resVision.status}`);
         }
 
-        const visionText = await resVision.json();
+        let visionText = await resVision.json();
+        visionText = visionText.msg.message.content
 
-        console.log('Vision text:', visionText.slice(0,20))
+        const res = await crossFetch(`${process.env.DEPLOY_URL}/api/imageinfo`, {
+            method: 'POST',
+            body: JSON.stringify({
+                text: `${visionText}`,
+                // caption: img_caption === null ? "" : img_caption
+            }),
+            headers: {
+            'Content-Type': 'application/json',
+            },
+        })
+
+        if (!res.ok) {
+            throw new Error(`Error in response: ${res.status}`);
+        }
+
+        let resMessage = await res.json();
+        resMessage = resMessage.msg.message.content
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
@@ -148,7 +165,7 @@ export async function POST(req) {
             messaging_product: 'whatsapp',
             to: from,
             text: {
-              body: `${visionText.msg.message.content}`
+              body: `${resMessage}`
             }
           })
         });

@@ -1,11 +1,12 @@
 import OpenAI from "openai";
 import { NextResponse } from "next/server";
+//import { OpenAIStream, StreamingTextResponse } from 'ai'
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-//export const runtime = 'edge'
+export const runtime = 'edge'
 
 export async function POST(req) {
 
@@ -16,14 +17,15 @@ export async function POST(req) {
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
-    max_tokens: 4096,
+    //stream: true,
+    max_tokens: 1000,
     messages: [
       {
         role: "user",
         content: [
           {
             type: "text",
-            text:  "¿Como puedo preparar este platillo en casa?"
+            text:  "¿Dime que hay en esta imagen, se breve pero descriptivo a detalle?"
           },
           {
             type: "image_url",
@@ -36,5 +38,7 @@ export async function POST(req) {
       },
     ],
   });
+  //const stream = OpenAIStream(response)
+  //return new StreamingTextResponse(stream)
   return NextResponse.json({ msg: response.choices[0] }, { status: 200 })
 }
