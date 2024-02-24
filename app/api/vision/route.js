@@ -1,6 +1,6 @@
 import OpenAI from "openai";
 import { OpenAIStream, StreamingTextResponse } from 'ai'
-import { NextResponse } from "next/server";
+//import { NextResponse } from "next/server";
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
@@ -16,7 +16,7 @@ export async function POST(req) {
 
   const response = await openai.chat.completions.create({
     model: "gpt-4-vision-preview",
-    //stream: true,
+    stream: true,
     max_tokens: 1000,
     messages: [
       {
@@ -34,7 +34,6 @@ export async function POST(req) {
       },
     ],
   });
-  //const stream = OpenAIStream(response)
-	//return new StreamingTextResponse(stream)
-    return NextResponse.json({ msg: response.choices[0] }, { status: 200 })
+  const stream = OpenAIStream(response)
+	return new StreamingTextResponse(stream)
 }

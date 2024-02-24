@@ -119,7 +119,7 @@ export async function POST(req) {
         //   throw new Error(`HTTP error! status: ${response.status}`);
         // }
 
-        const resVision = await crossFetch(`${process.env.DEPLOY_URL}/api/vision`, {
+        const resVision = await fetch(`${process.env.DEPLOY_URL}/api/vision`, {
             method: 'POST',
             body: JSON.stringify({
                 img: `data:image/jpeg;base64,${base64Data}`,
@@ -134,8 +134,13 @@ export async function POST(req) {
             throw new Error(`Error in response: ${resVision.status}`);
         }
 
-        let visionText = await resVision.json();
-        visionText = visionText.msg.message.content
+        let visionText = "";
+        const reader = resVision.body.getReader();
+        let { done, value } = await reader.read();
+        while (!done) {
+            visionText += new TextDecoder("utf-8").decode(value);
+            ({ done, value } = await reader.read());
+        }
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
