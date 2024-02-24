@@ -137,7 +137,7 @@ export async function POST(req) {
         let visionText = await resVision.json();
         visionText = visionText.msg.message.content
 
-        const res = await crossFetch(`${process.env.DEPLOY_URL}/api/imageinfo`, {
+        const res = await crossFetch(`${process.env.DEPLOY_URL}/api/foodinfo`, {
             method: 'POST',
             body: JSON.stringify({
                 text: `${visionText}`,
