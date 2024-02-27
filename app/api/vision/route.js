@@ -22,7 +22,7 @@ export async function POST(req) {
       {
         role: "user",
         content: [
-          { type: "text", text: "Como preparo el platillo que hay en la imagen" },
+          { type: "text", text: "que hay en la imagen" },
           {
             type: "image_url",
             image_url: {
