@@ -134,13 +134,7 @@ export async function POST(req) {
             throw new Error(`Error in response: ${resVision.status}`);
         }
 
-        let visionText = "";
-        const reader = resVision.body.getReader();
-        let { done, value } = await reader.read();
-        while (!done) {
-            visionText += new TextDecoder("utf-8").decode(value);
-            ({ done, value } = await reader.read());
-        }
+        const visionText = await resVision.json();
 
         const response = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
           method: 'POST',
@@ -152,7 +146,7 @@ export async function POST(req) {
             messaging_product: 'whatsapp',
             to: from,
             text: {
-              body: `${visionText}`
+              body: `${visionText.msg.message.content}`
             }
           })
         });
