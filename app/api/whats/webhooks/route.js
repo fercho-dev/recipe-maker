@@ -119,7 +119,7 @@ export async function POST(req) {
         //   throw new Error(`HTTP error! status: ${response.status}`);
         // }
 
-        const resVision = await fetch(`${process.env.DEPLOY_URL}/api/vision`, {
+        const resVision = await fetch(`${process.env.DEPLOY_URL_ENV}/api/vision`, {
             method: 'POST',
             body: JSON.stringify({
                 img: `data:image/jpeg;base64,${base64Data}`,
