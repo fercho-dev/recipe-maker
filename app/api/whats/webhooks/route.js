@@ -8,6 +8,10 @@ export async function GET(request) {
   const challenge = request.nextUrl.searchParams.get('hub.challenge') || null;
   const reqToken = request.nextUrl.searchParams.get('hub.verify_token') || null;
 
+  console.log("mode", mode)
+    console.log("challenge", challenge)
+    console.log("reqToken", reqToken)
+
   if (
     mode === 'subscribe' &&
     reqToken === token
@@ -49,7 +53,7 @@ export async function POST(req) {
             messaging_product: 'whatsapp',
             to: from,
             text: {
-              body: "Hello, I am a bot!"
+              body: "Por ahora solo puedo procesar imágenes. Envíame una imagen de ese platillo que te encanta y te diré cómo prepararlo."
             }
           })
         });
