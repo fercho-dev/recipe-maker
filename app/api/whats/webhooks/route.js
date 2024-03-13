@@ -102,26 +102,26 @@ export async function POST(req) {
         const buffer = await response_url.buffer();
         const base64Data = buffer.toString('base64');
 
-        console.log("base64 img", base64Data.slice(0,20))
+        // console.log("base64 img", base64Data.slice(0,20))
 
-        const response_prev = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            messaging_product: 'whatsapp',
-            to: from,
-            text: {
-              body: "Estoy procesando la imagen, esto puede tomar un par de minutos..."
-            }
-          })
-        });
+        // const response_prev = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
+        //   method: 'POST',
+        //   headers: {
+        //     'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
+        //     'Content-Type': 'application/json'
+        //   },
+        //   body: JSON.stringify({
+        //     messaging_product: 'whatsapp',
+        //     to: from,
+        //     text: {
+        //       body: "Estoy procesando la imagen, esto puede tomar un par de minutos..."
+        //     }
+        //   })
+        // });
     
-        if (!response_prev.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
+        // if (!response_prev.ok) {
+        //   throw new Error(`HTTP error! status: ${response.status}`);
+        // }
 
         const resVision = await fetch(`${process.env.DEPLOY_URL_ENV}/api/vision`, {
             method: 'POST',
