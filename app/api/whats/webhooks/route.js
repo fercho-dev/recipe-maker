@@ -104,24 +104,24 @@ export async function POST(req) {
 
         console.log("base64 img", base64Data.slice(0,20))
 
-        // const response_prev = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
-        //   method: 'POST',
-        //   headers: {
-        //     'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
-        //     'Content-Type': 'application/json'
-        //   },
-        //   body: JSON.stringify({
-        //     messaging_product: 'whatsapp',
-        //     to: from,
-        //     text: {
-        //       body: "Procesando imagen..."
-        //     }
-        //   })
-        // });
+        const response_prev = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            to: from,
+            text: {
+              body: "Estoy procesando la imagen, esto puede tomar un par de minutos..."
+            }
+          })
+        });
     
-        // if (!response_prev.ok) {
-        //   throw new Error(`HTTP error! status: ${response.status}`);
-        // }
+        if (!response_prev.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
         const resVision = await fetch(`${process.env.DEPLOY_URL_ENV}/api/vision`, {
             method: 'POST',
@@ -167,7 +167,26 @@ export async function POST(req) {
     
         return NextResponse.json(null, { status: 200 })
       } catch (error) {
-        return NextResponse.json({ success: false }, { status: 404 })
+        const response_error = await fetch(`https://graph.facebook.com/v19.0/${phon_no_id}/messages`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${process.env.WHATS_API_TOKEN}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            messaging_product: 'whatsapp',
+            to: from,
+            text: {
+              body: "Algo salió mal, por favor intenta de nuevo."
+            }
+          })
+        });
+
+        if (!response_error.ok) {
+          return NextResponse.json({ success: false }, { status: 404 })
+        }
+
+        return NextResponse.json(null, { status: 200 })
       }
 
     } else {
